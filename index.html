@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Standard Reserve — break the system</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #0e0e0d;
+    color: #ececea;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .wrap { max-width: 480px; width: 100%; }
+  h1 { font-size: 22px; font-weight: 500; margin: 0 0 8px; letter-spacing: -0.01em; }
+  p.sub { font-size: 14px; color: #9c9c98; margin: 0 0 32px; line-height: 1.6; }
+  .field { margin-bottom: 24px; }
+  label { display: flex; justify-content: space-between; font-size: 13px; color: #b5b5b0; margin-bottom: 10px; }
+  label span.val { color: #ececea; font-weight: 500; }
+  input[type="range"] { width: 100%; accent-color: #d85a30; }
+  .result { background: #1a1a18; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 16px; }
+  .result p.label { font-size: 13px; color: #9c9c98; margin: 0 0 8px; }
+  .result p.score { font-size: 44px; font-weight: 500; margin: 0; }
+  .result p.verdict { font-size: 15px; margin: 10px 0 0; }
+  footer { font-size: 12px; color: #6e6e6a; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Standard Reserve: break the system</h1>
+  <p class="sub">Push entry demand, exit volume, and liquidity depth to their limits. How high can you get the instability score?</p>
+
+  <div class="field">
+    <label for="entry">Entry demand <span class="val" id="entryVal">50</span></label>
+    <input type="range" min="0" max="100" value="50" step="1" id="entry">
+  </div>
+
+  <div class="field">
+    <label for="exit">Exit volume <span class="val" id="exitVal">50</span></label>
+    <input type="range" min="0" max="100" value="50" step="1" id="exit">
+  </div>
+
+  <div class="field">
+    <label for="liquidity">Liquidity depth <span class="val" id="liquidityVal">50</span></label>
+    <input type="range" min="0" max="100" value="50" step="1" id="liquidity">
+  </div>
+
+  <div class="result">
+    <p class="label">Instability score</p>
+    <p class="score" id="score">--</p>
+    <p class="verdict" id="verdict"></p>
+  </div>
+
+  <footer>
+    Simplified illustrative model, not live protocol data.<br>
+    Screenshot your highest score.<br>
+    Unofficial fan tool, not affiliated with the Standard Reserve team.
+  </footer>
+</div>
+
+<script>
+function update() {
+  var entry = parseInt(document.getElementById('entry').value);
+  var exit = parseInt(document.getElementById('exit').value);
+  var liq = parseInt(document.getElementById('liquidity').value);
+  document.getElementById('entryVal').textContent = entry;
+  document.getElementById('exitVal').textContent = exit;
+  document.getElementById('liquidityVal').textContent = liq;
+  var raw = (exit * 1.2) - (liq * 0.6) + Math.abs(entry - 50) * 0.4;
+  var score = Math.max(0, Math.min(100, Math.round(raw)));
+  document.getElementById('score').textContent = score;
+  var verdict, color;
+  if (score < 30) { verdict = 'holding steady'; color = '#5DCAA5'; }
+  else if (score < 60) { verdict = 'wobbling'; color = '#EF9F27'; }
+  else if (score < 85) { verdict = 'under real stress'; color = '#F09595'; }
+  else { verdict = 'broken'; color = '#E24B4A'; }
+  var v = document.getElementById('verdict');
+  v.textContent = verdict;
+  v.style.color = color;
+}
+['entry','exit','liquidity'].forEach(function(id){
+  document.getElementById(id).addEventListener('input', update);
+});
+update();
+</script>
+</body>
+</html>
